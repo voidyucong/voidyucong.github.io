@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JSON中Unicode与UTF-8的解析 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="##Unicode与UTF-8
+在 Unicode 出现之前，各地区制定了不同的编码系统，如中文主要用 GB 2312 和大五码、日文主要用 JIS 等。这样会造成很多不便，例如一个文本信息很难混合各种语言的文字。
+因此，在上世纪80年代末，Xerox、Apple 等公司开始研究，是否能制定一套多语言的统一编码系统。后来，多个机构成立了 Unicode 联盟，在 1991 年释出 Unicode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSON中Unicode与UTF-8的解析">
+<meta property="og:url" content="http://yucong0216.vicp.io:4000/ycblog/2017/03/02/JSON中Unicode与UTF-8的解析/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="##Unicode与UTF-8
+在 Unicode 出现之前，各地区制定了不同的编码系统，如中文主要用 GB 2312 和大五码、日文主要用 JIS 等。这样会造成很多不便，例如一个文本信息很难混合各种语言的文字。
+因此，在上世纪80年代末，Xerox、Apple 等公司开始研究，是否能制定一套多语言的统一编码系统。后来，多个机构成立了 Unicode 联盟，在 1991 年释出 Unicode">
+<meta property="og:updated_time" content="2017-03-02T07:03:33.861Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JSON中Unicode与UTF-8的解析">
+<meta name="twitter:description" content="##Unicode与UTF-8
+在 Unicode 出现之前，各地区制定了不同的编码系统，如中文主要用 GB 2312 和大五码、日文主要用 JIS 等。这样会造成很多不便，例如一个文本信息很难混合各种语言的文字。
+因此，在上世纪80年代末，Xerox、Apple 等公司开始研究，是否能制定一套多语言的统一编码系统。后来，多个机构成立了 Unicode 联盟，在 1991 年释出 Unicode">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/ycblog/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/ycblog/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/ycblog/">Home</a>
+        
+          <a class="main-nav-link" href="/ycblog/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yucong0216.vicp.io:4000/ycblog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-JSON中Unicode与UTF-8的解析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ycblog/2017/03/02/JSON中Unicode与UTF-8的解析/" class="article-date">
+  <time datetime="2017-03-02T07:03:05.000Z" itemprop="datePublished">2017-03-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      JSON中Unicode与UTF-8的解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##Unicode与UTF-8</p>
+<p>在 Unicode 出现之前，各地区制定了不同的编码系统，如中文主要用 GB 2312 和大五码、日文主要用 JIS 等。这样会造成很多不便，例如一个文本信息很难混合各种语言的文字。</p>
+<p>因此，在上世纪80年代末，Xerox、Apple 等公司开始研究，是否能制定一套多语言的统一编码系统。后来，多个机构成立了 Unicode 联盟，在 1991 年释出 Unicode 1.0，收录了 24 种语言共 7161 个字符。在四分之一个世纪后的 2016年，Unicode 已释出 9.0 版本，收录 135 种语言共 128237 个字符。</p>
+<p>这些字符被收录为统一字符集（Universal Coded Character Set, UCS），每个字符映射至一个整数码点（code point），码点的范围是 0 至 0x10FFFF，码点又通常记作 U+XXXX，当中 XXXX 为 <strong>16 进位数字。</strong>例如 虞 → U+865E。很明显，UCS 中的字符无法像 ASCII 般以一个字节存储。</p>
+<p>因此，Unicode 还制定了各种储存码点的方式，这些方式称为 Unicode 转换格式（Uniform Transformation Format, UTF）。现时流行的 UTF 为 UTF-8、UTF-16 和 UTF-32。每种 UTF 会把一个码点储存为一至多个编码单元（code unit）。例如 UTF-8 的编码单元是 8 位的字节、UTF-16 为 16 位、UTF-32 为 32 位。<strong>除 UTF-32 外，UTF-8 和 UTF-16 都是可变长度编码。</strong></p>
+<p>上面提到的 U+XXXX 中的 XXXX是4位16进制的整数，最大的表示范围是 0xFFFF，那如何表示 0x10FFFF 呢？</p>
+<p>其实，U+0000 - U+FFFF这组 Unicode 字符称为基本多文种平面，简称 BMP。在 BMP 以外的字符，JSON会使用代理对表示，比如 \uXXXX\uYYYY。如果第一个码点是 U+D800 - U+DBFF 间，便是高代理项（high surrogate），之后应该是一个 U+DC00 - U+DFFF 的低代理项，然后用公式<code>0x10000 + (H − 0xD800) × 0x400 + (L − 0xDC00)</code>变成真实的码点。</p>
+<p>例如，字符 <code>𝄞</code> 对应的16进制 Unicode 编码是 \uD834\uDD1E，解析发现\uD834是高代理项，\uDD1E是低代理项，计算码点得到 0x1D11E，然后再转换成UTF-8。</p>
+<table>
+<thead>
+<tr>
+<th>码点范围</th>
+<th style="text-align:center">码点位数</th>
+<th style="text-align:center">字节1</th>
+<th style="text-align:center">字节2</th>
+<th style="text-align:center">字节3</th>
+<th style="text-align:center">字节4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>U+0000 ~ U+007F</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">0xxxxxxx</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>U+0080 ~ U+07FF</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">110xxxxx</td>
+<td style="text-align:center">10xxxxxx</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>U+0800 ~ U+FFFF</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">1110xxxx</td>
+<td style="text-align:center">10xxxxxx</td>
+<td style="text-align:center">10xxxxxx</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>U+10000 ~ U+10FFFF</td>
+<td style="text-align:center">21</td>
+<td style="text-align:center">11110xxx</td>
+<td style="text-align:center">10xxxxxx</td>
+<td style="text-align:center">10xxxxxx</td>
+<td style="text-align:center">10xxxxxx</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>U+1D11E 处于 U+10000 - U+10FFFF 之间，所以编码成4个字节。</li>
+<li>U+1D11E 的二进制是 11101000100011110</li>
+<li>把二进制分拆成4组：000 011101 000100 011110</li>
+<li>加上前缀：11110000 10011101 10000100 10011110</li>
+<li>十六进制表示：0xF0 0x9D 0x84 0x9E</li>
+</ul>
+<p>代码表示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">// 16进制转10进制</div><div class="line">static void read_hex4(unsigned* ucode) &#123;</div><div class="line">    for (int i = 0; i &lt; 4; ++i) &#123;</div><div class="line">        if (isdigit(c)) &#123; *ucode&lt;&lt;=4; *ucode |= (c - &apos;0&apos;); &#125;</div><div class="line">        else if (c &gt;= &apos;A&apos; &amp;&amp; c &lt;= &apos;F&apos;) &#123; *ucode&lt;&lt;=4; *ucode |= (c - &apos;A&apos;) + 10; &#125;</div><div class="line">        else if (c &gt;= &apos;a&apos; &amp;&amp; c &lt;= &apos;f&apos;) &#123; *ucode&lt;&lt;=4; *ucode |= (c - &apos;a&apos;) + 10; &#125;</div><div class="line">        else &#123; *ucode = 0; return; &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 保存所有utf8字节</div><div class="line">static void encodeutf8(unsigned ucode) &#123;</div><div class="line">    char u8[5]; char* pu8 = u8;</div><div class="line">    if (ucode &lt;= 0x007F) &#123;  /* 1 byte */</div><div class="line">        *pu8 = ucode;</div><div class="line">    &#125;</div><div class="line">    else if (ucode &lt;= 0x7FF) &#123;  /* 2 byte */</div><div class="line">        *pu8 = (ucode &gt;&gt; 6) | 0xC0;</div><div class="line">        *pu8 = (ucode &amp; 0x3F) | 0x80;</div><div class="line">    &#125;</div><div class="line">    else if (ucode &lt;= 0xFFFF) &#123;  /* 3 byte */</div><div class="line">        *pu8 = (ucode &gt;&gt; 12) | 0xE0;</div><div class="line">        *pu8 = ((ucode &gt;&gt; 6) &amp; 0x3F) | 0x80;</div><div class="line">        *pu8 = (ucode &amp; 0x3F) | 0x80;</div><div class="line">    &#125;</div><div class="line">    else if (ucode &lt;= 0x10FFFF) &#123;  /* 4 byte */</div><div class="line">        *pu8 = (ucode &gt;&gt; 18) | 0xF0;</div><div class="line">        *pu8 = ((ucode &gt;&gt; 12) &amp; 0x3F) | 0x80;</div><div class="line">        *pu8 = ((ucode &gt;&gt; 6) &amp; 0x3F) | 0x80;</div><div class="line">        *pu8 = (ucode &amp; 0x3F) | 0x80;</div><div class="line">    &#125;</div><div class="line">    *pu8 = 0;</div><div class="line">    pu8 = u8;</div><div class="line">    print(&quot;%s\n&quot;, pu8);</div><div class="line">&#125;</div><div class="line"></div><div class="line">unsigned ucode = 0;</div><div class="line">read_hex4(ls, &amp;ucode);</div><div class="line">if (ucode == 0) return 0;</div><div class="line">// 判断是否有高低代理项</div><div class="line">if (ucode &gt;= 0xD800 &amp;&amp; ucode &lt;= 0xDBFF) &#123;  /* surrogate pair */</div><div class="line">    if (c != &apos;\\&apos;) return 0;</div><div class="line">    next(ls);</div><div class="line">    if (c != &apos;u&apos;) return 0;</div><div class="line">    next(ls);</div><div class="line">    unsigned ucodelow = 0;</div><div class="line">    read_hex4(ls, &amp;ucodelow);</div><div class="line">    if (ucodelow &lt; 0xDC00 || ucodelow &gt; 0xDFFF) return 0;</div><div class="line">    ucode = 0x10000 + (ucode - 0xD800) * 0x400 + (ucodelow - 0xDC00);</div><div class="line">&#125;</div><div class="line">encodeutf8(ucode);</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yucong0216.vicp.io:4000/ycblog/ycblog/2017/03/02/JSON中Unicode与UTF-8的解析/" data-id="cizs3sxbu0000m1jjqozcr8v6" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/ycblog/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/ycblog/2017/03/02/JSON中Unicode与UTF-8的解析/">JSON中Unicode与UTF-8的解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/ycblog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/ycblog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/ycblog/fancybox/jquery.fancybox.css">
+  <script src="/ycblog/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/ycblog/js/script.js"></script>
+
+  </div>
+</body>
+</html>
